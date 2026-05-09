@@ -22,23 +22,21 @@ export function useDashboardInsights() {
       setIsLoading(true);
       setError(null);
       try {
-        const [summaryRes, countriesRes] = await Promise.all([
+        const [summaryRes, countriesRes, topRes] = await Promise.all([
           fetch('/api/insights/summary'),
           fetch('/api/insights/countries'),
+          fetch('/api/insights/top'),
         ]);
 
         const summaryData = await summaryRes.json();
         const countriesData = await countriesRes.json();
+        const topData = await topRes.json();
 
-        if (summaryData.success && countriesData.success) {
-          // Sort countries by average salary for "Top Job Titles" simulation or just use country data
-          // Actually, I'll just use country insights for now as "Top Paying Job Titles" is a separate requirement
-          // I'll simulate top job titles from the country data or just leave it for now
-          
+        if (summaryData.success && countriesData.success && topData.success) {
           setInsights({
             summary: summaryData.data,
             countryInsights: countriesData.data,
-            topJobTitles: countriesData.data.slice(0, 5), // Placeholder
+            topJobTitles: topData.data,
           });
         } else {
           setError('Failed to fetch dashboard data');

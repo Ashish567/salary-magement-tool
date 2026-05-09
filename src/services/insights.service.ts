@@ -20,4 +20,8 @@ export class InsightsService {
   async getSummary() {
     return await this.repository.getSummary();
   }
+
+  async getTopJobTitles(limit?: number) {
+    return await this.repository.getTopJobTitles(limit);
+  }
 }

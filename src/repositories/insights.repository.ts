@@ -82,4 +82,29 @@ export class InsightsRepository {
       lowestSalary: aggregate._min.salary || 0,
     };
   }
+
+  async getTopJobTitles(limit: number = 5): Promise<JobTitleInsight[]> {
+    const aggregations = await prisma.employee.groupBy({
+      by: ['jobTitle', 'country'],
+      _count: {
+        _all: true,
+      },
+      _avg: {
+        salary: true,
+      },
+      orderBy: {
+        _avg: {
+          salary: 'desc',
+        },
+      },
+      take: limit,
+    });
+
+    return aggregations.map((item) => ({
+      country: item.country,
+      jobTitle: item.jobTitle,
+      employeeCount: item._count._all,
+      averageSalary: Math.round(item._avg.salary || 0),
+    }));
+  }
 }

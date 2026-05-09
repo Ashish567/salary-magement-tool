@@ -95,4 +95,19 @@ export class EmployeeRepository {
       throw new EmployeeRepositoryError('Failed to update employee');
     }
   }
+
+  async deleteEmployee(id: string) {
+    try {
+      return await prisma.employee.delete({
+        where: { id },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new EmployeeRepositoryError('Employee not found', 'NOT_FOUND');
+        }
+      }
+      throw new EmployeeRepositoryError('Failed to delete employee');
+    }
+  }
 }

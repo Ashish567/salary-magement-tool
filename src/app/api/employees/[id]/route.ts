@@ -46,3 +46,18 @@ export async function PUT(
     return ApiResponse.badRequest(error.message || 'Internal Server Error');
   }
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await employeeService.deleteEmployee(params.id);
+    return ApiResponse.success({ message: 'Employee deleted' });
+  } catch (error: any) {
+    if (error instanceof EmployeeRepositoryError && error.code === 'NOT_FOUND') {
+      return ApiResponse.notFound(error.message);
+    }
+    return ApiResponse.badRequest(error.message || 'Internal Server Error');
+  }
+}

@@ -119,4 +119,15 @@ export class EmployeeService {
       throw new Error('Failed to update employee');
     }
   }
+
+  async deleteEmployee(id: string) {
+    try {
+      return await this.repository.deleteEmployee(id);
+    } catch (error) {
+      if (error instanceof EmployeeRepositoryError) {
+        throw error;
+      }
+      throw new Error('Failed to delete employee');
+    }
+  }
 }

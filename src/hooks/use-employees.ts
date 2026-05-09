@@ -76,5 +76,6 @@ export function useEmployees() {
     setSearch: (s: string) => updateUrl({ search: s }),
     setFilter: (key: string, value: string) => updateUrl({ [key]: value }),
     setSort: (s: string, o: 'asc' | 'desc') => updateUrl({ sortBy: s, order: o }),
+    refresh: fetchEmployees,
   };
 }

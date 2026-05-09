@@ -14,10 +14,12 @@ import { useEmployees } from "@/hooks/use-employees";
 import { EmployeeSearch } from "@/components/search/employee-search";
 import { EmployeeFilters } from "@/components/filters/employee-filters";
 import { PaginationControls } from "@/components/pagination/pagination-controls";
+import { DeleteEmployeeDialog } from "@/components/dialogs/delete-employee-dialog";
 import { format } from "date-fns";
-import { ArrowUpDown, MoreHorizontal, X } from "lucide-react";
+import { ArrowUpDown, Edit, MoreHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import Link from "next/link";
 
 export function EmployeeTable() {
   const { 
@@ -30,7 +32,8 @@ export function EmployeeTable() {
     setFilter, 
     search, 
     country, 
-    jobTitle 
+    jobTitle,
+    refresh 
   } = useEmployees();
 
   const hasFilters = !!(search || country || jobTitle);
@@ -124,11 +127,18 @@ export function EmployeeTable() {
                       {format(new Date(employee.createdAt), 'MMM dd, yyyy')}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" asChild>
-                        <a href={`/employees/${employee.id}/edit`}>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </a>
-                      </Button>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button variant="ghost" size="icon" asChild>
+                          <Link href={`/employees/${employee.id}/edit`}>
+                            <Edit className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                        <DeleteEmployeeDialog 
+                          employeeId={employee.id} 
+                          employeeName={employee.fullName} 
+                          onSuccess={refresh}
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

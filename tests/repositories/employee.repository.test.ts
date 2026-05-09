@@ -60,6 +60,6 @@ describe('EmployeeRepository', () => {
   it('should fail to create an employee with a duplicate email', async () => {
     await repository.createEmployee(employeeData);
     
-    await expect(repository.createEmployee(employeeData)).rejects.toThrow();
+    await expect(repository.createEmployee(employeeData)).rejects.toThrow('Email already exists');
   });
 });

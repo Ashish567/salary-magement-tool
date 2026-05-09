@@ -7,9 +7,19 @@ export function generateEmployee() {
   const country = faker.helpers.arrayElement(COUNTRIES);
   const jobTitle = faker.helpers.arrayElement(JOB_TITLES);
   
-  // Realistic salary based on job title/experience simulation
-  // Simple range for now: 30k to 300k
-  const salary = faker.number.int({ min: 30000, max: 300000 });
+  // More realistic salary based on job title
+  let minSal = 30000;
+  let maxSal = 100000;
+
+  if (jobTitle.includes('Senior') || jobTitle.includes('DevOps') || jobTitle.includes('Scientist')) {
+    minSal = 80000;
+    maxSal = 200000;
+  } else if (jobTitle.includes('Manager')) {
+    minSal = 100000;
+    maxSal = 300000;
+  }
+
+  const salary = faker.number.int({ min: minSal, max: maxSal });
 
   return {
     firstName,

@@ -76,4 +76,23 @@ export class EmployeeRepository {
       throw new EmployeeRepositoryError('Failed to fetch employees');
     }
   }
+
+  async updateEmployee(id: string, data: Partial<Prisma.EmployeeUpdateInput>) {
+    try {
+      return await prisma.employee.update({
+        where: { id },
+        data,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new EmployeeRepositoryError('Email already exists', 'DUPLICATE_EMAIL');
+        }
+        if (error.code === 'P2025') {
+          throw new EmployeeRepositoryError('Employee not found', 'NOT_FOUND');
+        }
+      }
+      throw new EmployeeRepositoryError('Failed to update employee');
+    }
+  }
 }

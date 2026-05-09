@@ -34,6 +34,10 @@ export class ApiResponse {
     return this.error(message, 400, details);
   }
 
+  static notFound(message: string) {
+    return this.error(message, 404);
+  }
+
   static internalError(message = 'Internal Server Error') {
     return this.error(message, 500);
   }

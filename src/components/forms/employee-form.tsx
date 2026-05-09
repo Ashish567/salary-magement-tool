@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { employeeSchema } from "@/validations/employee.schema";
 import { useCreateEmployee } from "@/hooks/use-create-employee";
+import { useUpdateEmployee } from "@/hooks/use-update-employee";
+import { useEmployee } from "@/hooks/use-employee";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,15 +18,25 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
 import { toast } from "sonner";
+import { Employee } from "@/types/employee.types";
 
-export function EmployeeForm() {
-  const { createEmployee, isLoading, error: apiError } = useCreateEmployee();
-  const [success, setSuccess] = useState(false);
+interface EmployeeFormProps {
+  employee?: Employee;
+  employeeId?: string;
+}
+
+export function EmployeeForm({ employee: initialEmployee, employeeId }: EmployeeFormProps) {
   const router = useRouter();
+  const { createEmployee, isLoading: isCreating, error: createError } = useCreateEmployee();
+  const { updateEmployee, isLoading: isUpdating, error: updateError } = useUpdateEmployee();
+  const { employee: fetchedEmployee, isLoading: isFetching } = useEmployee(employeeId);
+  
+  const [success, setSuccess] = useState(false);
+  const isEditMode = !!(initialEmployee || employeeId);
+  const employee = initialEmployee || fetchedEmployee;
 
   const form = useForm({
     resolver: zodResolver(employeeSchema),
@@ -39,17 +51,54 @@ export function EmployeeForm() {
     },
   });
 
+  // Reset form when employee data is available
+  useEffect(() => {
+    if (employee) {
+      form.reset({
+        firstName: employee.firstName,
+        lastName: employee.lastName,
+        fullName: employee.fullName,
+        email: employee.email,
+        country: employee.country,
+        jobTitle: employee.jobTitle,
+        salary: employee.salary,
+      });
+    }
+  }, [employee, form]);
+
   async function onSubmit(values: any) {
-    const result = await createEmployee(values);
+    let result;
+    if (isEditMode && employee?.id) {
+      result = await updateEmployee(employee.id, values);
+      if (result) {
+        toast.success("Employee updated successfully!");
+        setSuccess(true);
+      }
+    } else {
+      result = await createEmployee(values);
+      if (result) {
+        toast.success("Employee created successfully!");
+        setSuccess(true);
+      }
+    }
+
     if (result) {
-      setSuccess(true);
-      toast.success("Employee created successfully!");
       setTimeout(() => {
         router.push("/employees");
       }, 2000);
-    } else {
-      toast.error("Failed to create employee");
     }
+  }
+
+  const isLoading = isCreating || isUpdating || isFetching;
+  const apiError = createError || updateError;
+
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Loading employee details...</span>
+      </div>
+    );
   }
 
   if (success) {
@@ -58,9 +107,11 @@ export function EmployeeForm() {
         <CardContent className="pt-6 flex flex-col items-center text-center space-y-4">
           <CheckCircle2 className="h-12 w-12 text-green-500" />
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-green-900">Employee Created!</h3>
+            <h3 className="text-xl font-semibold text-green-900">
+              Employee {isEditMode ? "Updated" : "Created"}!
+            </h3>
             <p className="text-green-700 text-sm">
-              The employee has been successfully added to the system. Redirecting...
+              The employee has been successfully {isEditMode ? "updated" : "added to the system"}. Redirecting...
             </p>
           </div>
         </CardContent>
@@ -71,8 +122,12 @@ export function EmployeeForm() {
   return (
     <Card className="shadow-xl shadow-primary/5 border-primary/10">
       <CardHeader>
-        <CardTitle>Create Employee</CardTitle>
-        <CardDescription>Enter the employee details to add them to the payroll.</CardDescription>
+        <CardTitle>{isEditMode ? "Edit Employee" : "Create Employee"}</CardTitle>
+        <CardDescription>
+          {isEditMode 
+            ? "Update the employee details below." 
+            : "Enter the employee details to add them to the payroll."}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -193,10 +248,10 @@ export function EmployeeForm() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
+                  {isEditMode ? "Updating..." : "Creating..."}
                 </>
               ) : (
-                "Create Employee"
+                isEditMode ? "Update Employee" : "Create Employee"
               )}
             </Button>
           </form>

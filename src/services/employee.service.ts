@@ -93,4 +93,30 @@ export class EmployeeService {
       [sortBy]: order,
     };
   }
+
+  async getEmployeeById(id: string) {
+    const employee = await this.repository.findEmployeeById(id);
+    if (!employee) {
+      throw new EmployeeRepositoryError('Employee not found', 'NOT_FOUND');
+    }
+    return employee;
+  }
+
+  async updateEmployee(id: string, data: Partial<CreateEmployeeRequest>) {
+    // 1. Partial Validation (if fields are provided)
+    const validation = employeeSchema.partial().safeParse(data);
+    if (!validation.success) {
+      throw new Error(validation.error.errors[0].message);
+    }
+
+    // 2. Persistence
+    try {
+      return await this.repository.updateEmployee(id, validation.data);
+    } catch (error) {
+      if (error instanceof EmployeeRepositoryError) {
+        throw error;
+      }
+      throw new Error('Failed to update employee');
+    }
+  }
 }

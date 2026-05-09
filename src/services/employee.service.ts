@@ -29,18 +29,48 @@ export class EmployeeService {
   }
 
   async getEmployees(query: EmployeeListQuery) {
+    const { skip, take, page } = this.getPaginationParams(query);
+    const where = this.buildWhereClause(query);
+    const orderBy = this.buildOrderByClause(query);
+
+    const { employees, total } = await this.repository.findEmployees({
+      skip,
+      take,
+      where,
+      orderBy,
+    });
+
+    return {
+      employees,
+      pagination: {
+        total,
+        totalPages: Math.ceil(total / take),
+        currentPage: page,
+        limit: take,
+      },
+    };
+  }
+
+  private getPaginationParams(query: EmployeeListQuery) {
     const page = Math.max(1, Number(query.page) || 1);
     const limit = Math.max(1, Math.min(100, Number(query.limit) || 20));
-    const skip = (page - 1) * limit;
+    return {
+      skip: (page - 1) * limit,
+      take: limit,
+      page,
+    };
+  }
 
+  private buildWhereClause(query: EmployeeListQuery): Prisma.EmployeeWhereInput {
     const where: Prisma.EmployeeWhereInput = {};
 
     if (query.search) {
+      const search = query.search;
       where.OR = [
-        { fullName: { contains: query.search } },
-        { email: { contains: query.search } },
-        { country: { contains: query.search } },
-        { jobTitle: { contains: query.search } },
+        { fullName: { contains: search } },
+        { email: { contains: search } },
+        { country: { contains: search } },
+        { jobTitle: { contains: search } },
       ];
     }
 
@@ -52,25 +82,15 @@ export class EmployeeService {
       where.jobTitle = query.jobTitle;
     }
 
-    const orderBy: Prisma.EmployeeOrderByWithRelationInput = {
-      [query.sortBy || 'createdAt']: query.order || 'desc',
-    };
+    return where;
+  }
 
-    const { employees, total } = await this.repository.findEmployees({
-      skip,
-      take: limit,
-      where,
-      orderBy,
-    });
+  private buildOrderByClause(query: EmployeeListQuery): Prisma.EmployeeOrderByWithRelationInput {
+    const sortBy = query.sortBy || 'createdAt';
+    const order = query.order || 'desc';
 
     return {
-      employees,
-      pagination: {
-        total,
-        totalPages: Math.ceil(total / limit),
-        currentPage: page,
-        limit,
-      },
+      [sortBy]: order,
     };
   }
 }

@@ -11,7 +11,7 @@ export class InsightsService {
   async getJobTitleInsight(query: any) {
     const validation = jobTitleInsightQuerySchema.safeParse(query);
     if (!validation.success) {
-      throw new Error(validation.error.errors[0].message);
+      throw new Error(validation.error.issues[0].message);
     }
 
     return await this.repository.getJobTitleInsight(validation.data.country, validation.data.jobTitle);

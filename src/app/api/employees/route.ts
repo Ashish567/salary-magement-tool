@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
     const validation = EmployeeListQuerySchema.safeParse(rawQuery);
     
     if (!validation.success) {
-      return ApiResponse.badRequest(validation.error.errors[0].message);
+      return ApiResponse.badRequest(validation.error.issues[0].message);
     }
 
     const result = await employeeService.getEmployees(validation.data);

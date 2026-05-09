@@ -14,7 +14,7 @@ export class EmployeeService {
     // 1. Validation
     const validation = employeeSchema.safeParse(data);
     if (!validation.success) {
-      throw new Error(validation.error.errors[0].message);
+      throw new Error(validation.error.issues[0].message);
     }
 
     // 2. Persistence
@@ -106,7 +106,7 @@ export class EmployeeService {
     // 1. Partial Validation (if fields are provided)
     const validation = employeeSchema.partial().safeParse(data);
     if (!validation.success) {
-      throw new Error(validation.error.errors[0].message);
+      throw new Error(validation.error.issues[0].message);
     }
 
     // 2. Persistence

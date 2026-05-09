@@ -1,13 +1,40 @@
-export type ApiResponse<T> = {
-  data: T | null;
-  message: string;
-  success: boolean;
-};
+import { NextResponse } from 'next/server';
 
-export function emptyApiResponse<T>(message = "No data"): ApiResponse<T> {
-  return {
-    data: null,
-    message,
-    success: true,
-  };
+export class ApiResponse {
+  static success<T>(data: T, status = 200) {
+    return NextResponse.json(
+      {
+        success: true,
+        data,
+      },
+      { status }
+    );
+  }
+
+  static error(message: string, status = 400, details?: any) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: message,
+        ...(details && { details }),
+      },
+      { status }
+    );
+  }
+
+  static created<T>(data: T) {
+    return this.success(data, 201);
+  }
+
+  static conflict(message: string) {
+    return this.error(message, 409);
+  }
+
+  static badRequest(message: string, details?: any) {
+    return this.error(message, 400, details);
+  }
+
+  static internalError(message = 'Internal Server Error') {
+    return this.error(message, 500);
+  }
 }

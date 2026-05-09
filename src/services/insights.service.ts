@@ -16,4 +16,8 @@ export class InsightsService {
 
     return await this.repository.getJobTitleInsight(validation.data.country, validation.data.jobTitle);
   }
+
+  async getSummary() {
+    return await this.repository.getSummary();
+  }
 }

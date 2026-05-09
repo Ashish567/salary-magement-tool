@@ -53,4 +53,33 @@ export class InsightsRepository {
       averageSalary: Math.round(aggregation._avg.salary || 0),
     };
   }
+
+  async getSummary(): Promise<{
+    totalEmployees: number;
+    averageSalary: number;
+    highestSalary: number;
+    lowestSalary: number;
+  }> {
+    const aggregate = await prisma.employee.aggregate({
+      _count: {
+        _all: true,
+      },
+      _avg: {
+        salary: true,
+      },
+      _max: {
+        salary: true,
+      },
+      _min: {
+        salary: true,
+      },
+    });
+
+    return {
+      totalEmployees: aggregate._count._all,
+      averageSalary: Math.round(aggregate._avg.salary || 0),
+      highestSalary: aggregate._max.salary || 0,
+      lowestSalary: aggregate._min.salary || 0,
+    };
+  }
 }

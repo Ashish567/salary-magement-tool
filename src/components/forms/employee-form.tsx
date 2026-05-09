@@ -19,6 +19,8 @@ import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { toast } from "sonner";
+
 export function EmployeeForm() {
   const { createEmployee, isLoading, error: apiError } = useCreateEmployee();
   const [success, setSuccess] = useState(false);
@@ -41,9 +43,12 @@ export function EmployeeForm() {
     const result = await createEmployee(values);
     if (result) {
       setSuccess(true);
+      toast.success("Employee created successfully!");
       setTimeout(() => {
         router.push("/employees");
       }, 2000);
+    } else {
+      toast.error("Failed to create employee");
     }
   }
 

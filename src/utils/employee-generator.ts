@@ -29,6 +29,8 @@ export function generateEmployee() {
     country,
     jobTitle,
     salary,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 }
 

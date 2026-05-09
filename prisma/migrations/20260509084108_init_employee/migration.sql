@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "Employee" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
@@ -8,8 +8,10 @@ CREATE TABLE "Employee" (
     "country" TEXT NOT NULL,
     "jobTitle" TEXT NOT NULL,
     "salary" REAL NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Employee_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex

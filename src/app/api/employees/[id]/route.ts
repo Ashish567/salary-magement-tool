@@ -7,10 +7,11 @@ const employeeService = new EmployeeService();
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const employee = await employeeService.getEmployeeById(params.id);
+    const { id } = await params;
+    const employee = await employeeService.getEmployeeById(id);
     return ApiResponse.success({ employee });
   } catch (error: any) {
     if (error instanceof EmployeeRepositoryError && error.code === 'NOT_FOUND') {
@@ -22,7 +23,7 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     let body;
@@ -32,7 +33,8 @@ export async function PUT(
       return ApiResponse.badRequest('Invalid JSON body');
     }
 
-    const employee = await employeeService.updateEmployee(params.id, body);
+    const { id } = await params;
+    const employee = await employeeService.updateEmployee(id, body);
     return ApiResponse.success({ employee });
   } catch (error: any) {
     if (error instanceof EmployeeRepositoryError) {
@@ -49,10 +51,11 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await employeeService.deleteEmployee(params.id);
+    const { id } = await params;
+    await employeeService.deleteEmployee(id);
     return ApiResponse.success({ message: 'Employee deleted' });
   } catch (error: any) {
     if (error instanceof EmployeeRepositoryError && error.code === 'NOT_FOUND') {

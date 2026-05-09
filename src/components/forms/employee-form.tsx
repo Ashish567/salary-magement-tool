@@ -70,8 +70,8 @@ export function EmployeeForm({ employee: initialEmployee, employeeId }: Employee
 
   async function onSubmit(values: any) {
     let result;
-    if (isEditMode && employee?.id) {
-      result = await updateEmployee(employee.id, values);
+    if (isEditMode && employeeId) {
+      result = await updateEmployee(employeeId, values);
       if (result) {
         toast.success("Employee updated successfully!");
         setSuccess(true);

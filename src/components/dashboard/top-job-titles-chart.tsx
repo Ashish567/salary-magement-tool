@@ -43,7 +43,10 @@ export function TopJobTitlesChart({ data }: TopJobTitlesChartProps) {
             <Tooltip 
               cursor={{ fill: 'transparent' }}
               contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-              formatter={(value: number) => [`$${value.toLocaleString()}`, "Average Salary"]}
+              formatter={(value) => {
+                const salary = Number(value ?? 0);
+                return [`$${salary.toLocaleString()}`, "Average Salary"];
+              }}
             />
             <Bar dataKey="averageSalary" radius={[0, 4, 4, 0]} barSize={30}>
               {data.map((entry, index) => (

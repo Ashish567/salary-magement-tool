@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { EmployeeService } from '@/services/employee.service';
 import { EmployeeRepositoryError } from '@/repositories/employee.repository';
 import { ApiResponse } from '@/lib/api-response';
+import { EmployeeListQuerySchema } from '@/dto/employee.dto';
 
 const employeeService = new EmployeeService();
 
@@ -32,18 +33,15 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
+    const rawQuery = Object.fromEntries(searchParams.entries());
     
-    const query = {
-      page: parseInt(searchParams.get('page') || '1'),
-      limit: parseInt(searchParams.get('limit') || '20'),
-      search: searchParams.get('search') || undefined,
-      country: searchParams.get('country') || undefined,
-      jobTitle: searchParams.get('jobTitle') || undefined,
-      sortBy: searchParams.get('sortBy') as any || 'createdAt',
-      order: searchParams.get('order') as any || 'desc',
-    };
+    const validation = EmployeeListQuerySchema.safeParse(rawQuery);
+    
+    if (!validation.success) {
+      return ApiResponse.badRequest(validation.error.errors[0].message);
+    }
 
-    const result = await employeeService.getEmployees(query);
+    const result = await employeeService.getEmployees(validation.data);
 
     return ApiResponse.success(result);
   } catch (error: any) {

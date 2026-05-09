@@ -21,4 +21,7 @@ model Employee {
 
   @@index([country])
   @@index([jobTitle])
+  @@index([createdAt])
+  @@index([salary])
+  @@index([country, jobTitle])
 }

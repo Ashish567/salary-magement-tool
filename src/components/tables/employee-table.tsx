@@ -33,7 +33,8 @@ export function EmployeeTable() {
     search, 
     country, 
     jobTitle,
-    refresh 
+    refresh,
+    removeEmployeeLocal 
   } = useEmployees();
 
   const hasFilters = !!(search || country || jobTitle);
@@ -136,7 +137,7 @@ export function EmployeeTable() {
                         <DeleteEmployeeDialog 
                           employeeId={employee.id} 
                           employeeName={employee.fullName} 
-                          onSuccess={refresh}
+                          onSuccess={() => removeEmployeeLocal(employee.id)}
                         />
                       </div>
                     </TableCell>

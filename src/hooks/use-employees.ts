@@ -77,5 +77,14 @@ export function useEmployees() {
     setFilter: (key: string, value: string) => updateUrl({ [key]: value }),
     setSort: (s: string, o: 'asc' | 'desc') => updateUrl({ sortBy: s, order: o }),
     refresh: fetchEmployees,
+    removeEmployeeLocal: (id: string) => {
+      setEmployees(prev => prev.filter(emp => emp.id !== id));
+      if (pagination) {
+        setPagination({
+          ...pagination,
+          total: pagination.total - 1,
+        });
+      }
+    },
   };
 }

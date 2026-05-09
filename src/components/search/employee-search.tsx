@@ -9,6 +9,10 @@ export function EmployeeSearch() {
   const { search, setSearch } = useEmployees();
   const [localValue, setLocalValue] = useState(search);
 
+  useEffect(() => {
+    setLocalValue(search);
+  }, [search]);
+
   // Debounce search update
   useEffect(() => {
     const timer = setTimeout(() => {

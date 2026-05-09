@@ -14,6 +14,7 @@ describe('DeleteEmployeeDialog', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockDeleteEmployee.mockResolvedValue(true);
     (useDeleteEmployee as any).mockReturnValue({
       deleteEmployee: mockDeleteEmployee,
       isLoading: false,

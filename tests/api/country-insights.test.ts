@@ -7,9 +7,9 @@ describe('Country Insights API', () => {
     await prisma.employee.deleteMany();
     await prisma.employee.createMany({
       data: [
-        { firstName: 'A', lastName: 'B', fullName: 'A B', email: 'a@ex.com', country: 'India', jobTitle: 'Dev', salary: 100000 },
-        { firstName: 'C', lastName: 'D', fullName: 'C D', email: 'c@ex.com', country: 'India', jobTitle: 'Dev', salary: 200000 },
-        { firstName: 'E', lastName: 'F', fullName: 'E F', email: 'e@ex.com', country: 'USA', jobTitle: 'Dev', salary: 150000 },
+        { firstName: 'A', lastName: 'B', fullName: 'A B', email: 'cnt1@ex.com', country: 'India', jobTitle: 'Dev', salary: 100000 },
+        { firstName: 'C', lastName: 'D', fullName: 'C D', email: 'cnt2@ex.com', country: 'India', jobTitle: 'Dev', salary: 200000 },
+        { firstName: 'E', lastName: 'F', fullName: 'E F', email: 'cnt3@ex.com', country: 'USA', jobTitle: 'Dev', salary: 150000 },
       ],
     });
   });

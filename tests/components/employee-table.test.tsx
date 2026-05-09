@@ -1,7 +1,16 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { EmployeeTable } from '../../src/components/tables/employee-table';
 import { useEmployees } from '../../src/hooks/use-employees';
+
+// Mock next/navigation
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+  })),
+  usePathname: vi.fn(() => '/employees'),
+  useSearchParams: vi.fn(() => new URLSearchParams()),
+}));
 
 // Mock the hook
 vi.mock('../../src/hooks/use-employees', () => ({
@@ -41,6 +50,10 @@ describe('EmployeeTable', () => {
     });
   });
 
+  afterEach(() => {
+    cleanup();
+  });
+
   it('renders employee rows correctly', () => {
     render(<EmployeeTable />);
     
@@ -58,7 +71,7 @@ describe('EmployeeTable', () => {
     
     const { container } = render(<EmployeeTable />);
     // Check for skeletons - shadcn skeletons usually have animate-pulse class
-    expect(container.querySelector('.animate-pulse')).toBeDefined();
+    expect(container.querySelector('.animate-pulse')).not.toBeNull();
   });
 
   it('shows empty state message when no employees found', () => {
@@ -69,7 +82,7 @@ describe('EmployeeTable', () => {
     });
     
     render(<EmployeeTable />);
-    expect(screen.getByText(/no employees found/i)).toBeDefined();
+    expect(screen.getByText(/no employees found/i)).toBeInTheDocument();
   });
 
   it('triggers search update when typing in search input', async () => {
@@ -101,8 +114,8 @@ describe('EmployeeTable', () => {
       setPage,
     });
     
-    render(<EmployeeTable />);
-    const nextButton = screen.getByRole('button', { name: /next/i });
+    const { container } = render(<EmployeeTable />);
+    const nextButton = container.querySelector('[data-testid="next-page"]') as HTMLButtonElement;
     fireEvent.click(nextButton);
     
     expect(setPage).toHaveBeenCalledWith(2);

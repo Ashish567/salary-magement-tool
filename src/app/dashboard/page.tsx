@@ -34,68 +34,69 @@ export default function DashboardPage() {
   return (
     <GenericErrorBoundary>
       <div className="p-8 space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">HR Analytics</h1>
-        <p className="text-muted-foreground">
-          Real-time insights into organization-wide salary distribution and workforce metrics.
-        </p>
-      </div>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold tracking-tight">HR Analytics</h1>
+          <p className="text-muted-foreground">
+            Real-time insights into organization-wide salary distribution and workforce metrics.
+          </p>
+        </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {isLoading ? (
-          Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-[120px] w-full rounded-xl" />
-          ))
-        ) : (
-          <>
-            <MetricCard 
-              title="Total Employees" 
-              value={insights?.summary.totalEmployees || 0} 
-              description="Total workforce size" 
-              icon={Users} 
-            />
-            <MetricCard 
-              title="Average Salary" 
-              value={`$${(insights?.summary.averageSalary || 0).toLocaleString()}`} 
-              description="Across all regions" 
-              icon={DollarSign} 
-            />
-            <MetricCard 
-              title="Highest Salary" 
-              value={`$${(insights?.summary.highestSalary || 0).toLocaleString()}`} 
-              description="Peak compensation" 
-              icon={TrendingUp} 
-            />
-            <MetricCard 
-              title="Lowest Salary" 
-              value={`$${(insights?.summary.lowestSalary || 0).toLocaleString()}`} 
-              description="Base compensation" 
-              icon={TrendingDown} 
-            />
-          </>
-        )}
-      </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {isLoading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-[120px] w-full rounded-xl" />
+            ))
+          ) : (
+            <>
+              <MetricCard 
+                title="Total Employees" 
+                value={insights?.summary.totalEmployees || 0} 
+                description="Total workforce size" 
+                icon={Users} 
+              />
+              <MetricCard 
+                title="Average Salary" 
+                value={`$${(insights?.summary.averageSalary || 0).toLocaleString()}`} 
+                description="Across all regions" 
+                icon={DollarSign} 
+              />
+              <MetricCard 
+                title="Highest Salary" 
+                value={`$${(insights?.summary.highestSalary || 0).toLocaleString()}`} 
+                description="Peak compensation" 
+                icon={TrendingUp} 
+              />
+              <MetricCard 
+                title="Lowest Salary" 
+                value={`$${(insights?.summary.lowestSalary || 0).toLocaleString()}`} 
+                description="Base compensation" 
+                icon={TrendingDown} 
+              />
+            </>
+          )}
+        </div>
 
-      <div className="grid gap-4 md:grid-cols-4 lg:grid-cols-4">
-        {isLoading ? (
-          <>
-            <Skeleton className="h-[450px] col-span-4 lg:col-span-2 rounded-xl" />
-            <Skeleton className="h-[450px] col-span-4 lg:col-span-2 rounded-xl" />
-          </>
-        ) : (
-          <>
-            <SalaryCountryChart data={insights?.countryInsights || []} />
-            <EmployeeDistributionChart data={insights?.countryInsights || []} />
-          </>
-        )}
-      </div>
+        <div className="grid gap-4 md:grid-cols-4 lg:grid-cols-4">
+          {isLoading ? (
+            <>
+              <Skeleton className="h-[450px] col-span-4 lg:col-span-2 rounded-xl" />
+              <Skeleton className="h-[450px] col-span-4 lg:col-span-2 rounded-xl" />
+            </>
+          ) : (
+            <>
+              <SalaryCountryChart data={insights?.countryInsights || []} />
+              <EmployeeDistributionChart data={insights?.countryInsights || []} />
+            </>
+          )}
+        </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        {isLoading ? (
-          <Skeleton className="h-[450px] col-span-4 rounded-xl" />
-        ) : (
-          <TopJobTitlesChart data={insights?.topJobTitles || []} />
-        )}
+        <div className="grid gap-4 md:grid-cols-4">
+          {isLoading ? (
+            <Skeleton className="h-[450px] col-span-4 rounded-xl" />
+          ) : (
+            <TopJobTitlesChart data={insights?.topJobTitles || []} />
+          )}
+        </div>
       </div>
     </GenericErrorBoundary>
   );

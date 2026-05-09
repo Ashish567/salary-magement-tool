@@ -42,16 +42,15 @@ export function EmployeeTable() {
     search, 
     country, 
     jobTitle,
+    resetFilters,
     removeEmployeeLocal 
   } = useEmployees();
 
   const hasFilters = useMemo(() => !!(search || country || jobTitle), [search, country, jobTitle]);
 
   const clearFilters = useCallback(() => {
-    setSearch('');
-    setFilter('country', '');
-    setFilter('jobTitle', '');
-  }, [setSearch, setFilter]);
+    resetFilters();
+  }, [resetFilters]);
 
   const handleSort = useCallback((field: string) => {
     const newOrder = sortBy === field && order === 'asc' ? 'desc' : 'asc';

@@ -19,8 +19,10 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { COUNTRIES, JOB_TITLES } from '@/constants/employee-constants';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { useRouter } from "next/navigation";
 import { Employee } from "@/types/employee.types";
 
 interface EmployeeFormProps {
@@ -197,7 +199,16 @@ export function EmployeeForm({ employee: initialEmployee, employeeId }: Employee
                   <FormItem>
                     <FormLabel>Country</FormLabel>
                     <FormControl>
-                      <Input placeholder="USA" {...field} />
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select a country" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {COUNTRIES.map((c) => (
+                            <SelectItem key={c} value={c}>{c}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -210,7 +221,16 @@ export function EmployeeForm({ employee: initialEmployee, employeeId }: Employee
                   <FormItem>
                     <FormLabel>Job Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Software Engineer" {...field} />
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className="w-[200px]">
+                          <SelectValue placeholder="Select a job title" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {JOB_TITLES.map((jt) => (
+                            <SelectItem key={jt} value={jt}>{jt}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -15,7 +15,9 @@ vi.mock('recharts', () => ({
   Bar: () => <div>Bar</div>,
   XAxis: () => <div>XAxis</div>,
   YAxis: () => <div>YAxis</div>,
+  CartesianGrid: () => <div>CartesianGrid</div>,
   Tooltip: () => <div>Tooltip</div>,
+  Legend: () => <div>Legend</div>,
   PieChart: ({ children }: any) => <div>{children}</div>,
   Pie: () => <div>Pie</div>,
   Cell: () => <div>Cell</div>,
@@ -53,9 +55,9 @@ describe('DashboardPage', () => {
 
     render(<DashboardPage />);
     
-    expect(screen.getByText(/total employees/i)).toBeDefined();
-    expect(screen.getByText('10')).toBeDefined();
-    expect(screen.getByText(/average salary/i)).toBeDefined();
+    expect(screen.getByText(/total employees/i)).toBeInTheDocument();
+    expect(screen.getByText('10')).toBeInTheDocument();
+    expect(screen.getAllByText(/average salary/i).length).toBeGreaterThan(0);
   });
 
   it('shows loading skeletons when loading', () => {

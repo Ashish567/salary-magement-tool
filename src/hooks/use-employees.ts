@@ -62,6 +62,16 @@ export function useEmployees() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
+  const resetFilters = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('search');
+    params.delete('country');
+    params.delete('jobTitle');
+    params.set('page', '1');
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
   return {
     employees,
     isLoading,
@@ -76,6 +86,7 @@ export function useEmployees() {
     setSearch: (s: string) => updateUrl({ search: s }),
     setFilter: (key: string, value: string) => updateUrl({ [key]: value }),
     setSort: (s: string, o: 'asc' | 'desc') => updateUrl({ sortBy: s, order: o }),
+    resetFilters,
     refresh: fetchEmployees,
     removeEmployeeLocal: (id: string) => {
       setEmployees(prev => prev.filter(emp => emp.id !== id));

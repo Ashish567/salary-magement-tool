@@ -7,15 +7,16 @@ describe('Job Title Insights API', () => {
     await prisma.employee.deleteMany();
     await prisma.employee.createMany({
       data: [
-        { firstName: 'A', lastName: 'B', fullName: 'A B', email: 'a@ex.com', country: 'India', jobTitle: 'Software Engineer', salary: 100000 },
-        { firstName: 'C', lastName: 'D', fullName: 'C D', email: 'c@ex.com', country: 'India', jobTitle: 'Software Engineer', salary: 140000 },
-        { firstName: 'E', lastName: 'F', fullName: 'E F', email: 'e@ex.com', country: 'India', jobTitle: 'Product Manager', salary: 150000 },
+        { firstName: 'A', lastName: 'B', fullName: 'A B', email: 'job1@ex.com', country: 'India', jobTitle: 'Software Engineer', salary: 100000 },
+        { firstName: 'C', lastName: 'D', fullName: 'C D', email: 'job2@ex.com', country: 'India', jobTitle: 'Software Engineer', salary: 140000 },
+        { firstName: 'E', lastName: 'F', fullName: 'E F', email: 'job3@ex.com', country: 'India', jobTitle: 'Product Manager', salary: 150000 },
       ],
     });
   });
 
   it('should return average salary for a specific job title in a country', async () => {
-    const req = new Request('http://localhost:3000/api/insights/job-titles?country=India&jobTitle=Software Engineer');
+    const params = new URLSearchParams({ country: 'India', jobTitle: 'Software Engineer' });
+    const req = new Request(`http://localhost:3000/api/insights/job-titles?${params.toString()}`);
     const res = await GET(req as any);
     const body = await res.json();
 
@@ -25,7 +26,8 @@ describe('Job Title Insights API', () => {
   });
 
   it('should return 404 if no data found for the criteria', async () => {
-    const req = new Request('http://localhost:3000/api/insights/job-titles?country=Mars&jobTitle=Alien');
+    const params = new URLSearchParams({ country: 'Mars', jobTitle: 'Alien' });
+    const req = new Request(`http://localhost:3000/api/insights/job-titles?${params.toString()}`);
     const res = await GET(req as any);
     expect(res.status).toBe(404);
   });

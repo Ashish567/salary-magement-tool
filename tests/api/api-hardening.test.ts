@@ -17,7 +17,7 @@ describe('API Hardening', () => {
     
     // Should fallback to defaults (page 1, limit 10)
     expect(res.status).toBe(200);
-    expect(body.data.pagination.page).toBe(1);
+    expect(body.data.pagination.currentPage).toBe(1);
     expect(body.data.pagination.limit).toBe(10);
   });
 });

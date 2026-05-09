@@ -13,7 +13,11 @@ export interface JobTitleInsight {
   employeeCount: number;
 }
 
-export interface JobTitleInsightQuery {
-  country?: string;
-  jobTitle?: string;
-}
+import { z } from 'zod';
+
+export const jobTitleInsightQuerySchema = z.object({
+  country: z.string().min(1, 'Country is required'),
+  jobTitle: z.string().min(1, 'Job Title is required'),
+});
+
+export type JobTitleInsightQuery = z.infer<typeof jobTitleInsightQuerySchema>;

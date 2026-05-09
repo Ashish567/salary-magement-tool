@@ -14,6 +14,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { GenericErrorBoundary } from "@/components/error-boundary/generic-error-boundary";
 
 export default function DashboardPage() {
   const { insights, isLoading, error } = useDashboardInsights();
@@ -31,7 +32,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-500">
+    <GenericErrorBoundary>
+      <div className="p-8 space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">HR Analytics</h1>
         <p className="text-muted-foreground">
@@ -95,6 +97,6 @@ export default function DashboardPage() {
           <TopJobTitlesChart data={insights?.topJobTitles || []} />
         )}
       </div>
-    </div>
+    </GenericErrorBoundary>
   );
 }

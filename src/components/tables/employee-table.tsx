@@ -124,8 +124,10 @@ export function EmployeeTable() {
                       {format(new Date(employee.createdAt), 'MMM dd, yyyy')}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
+                      <Button variant="ghost" size="icon" asChild>
+                        <a href={`/employees/${employee.id}/edit`}>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </a>
                       </Button>
                     </TableCell>
                   </TableRow>

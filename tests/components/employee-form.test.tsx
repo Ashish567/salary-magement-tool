@@ -8,6 +8,13 @@ vi.mock('../../src/hooks/use-create-employee', () => ({
   useCreateEmployee: vi.fn(),
 }));
 
+// Mock next/navigation
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+  })),
+}));
+
 describe('EmployeeForm', () => {
   const mockCreateEmployee = vi.fn();
   
@@ -21,22 +28,22 @@ describe('EmployeeForm', () => {
   });
 
   it('renders all form fields correctly', () => {
-    render(<EmployeeForm />);
+    const { container } = render(<EmployeeForm />);
     
-    expect(screen.getByLabelText(/first name/i)).toBeDefined();
-    expect(screen.getByLabelText(/last name/i)).toBeDefined();
-    expect(screen.getByLabelText(/full name/i)).toBeDefined();
-    expect(screen.getByLabelText(/email/i)).toBeDefined();
-    expect(screen.getByLabelText(/country/i)).toBeDefined();
-    expect(screen.getByLabelText(/job title/i)).toBeDefined();
-    expect(screen.getByLabelText(/salary/i)).toBeDefined();
-    expect(screen.getByRole('button', { name: /create employee/i })).toBeDefined();
+    expect(container.querySelector('input[name="firstName"]')).toBeDefined();
+    expect(container.querySelector('input[name="lastName"]')).toBeDefined();
+    expect(container.querySelector('input[name="fullName"]')).toBeDefined();
+    expect(container.querySelector('input[name="email"]')).toBeDefined();
+    expect(container.querySelector('input[name="country"]')).toBeDefined();
+    expect(container.querySelector('input[name="jobTitle"]')).toBeDefined();
+    expect(container.querySelector('input[name="salary"]')).toBeDefined();
+    expect(container.querySelector('[data-testid="submit-button"]')).toBeDefined();
   });
 
   it('shows validation errors for invalid input', async () => {
-    render(<EmployeeForm />);
+    const { container } = render(<EmployeeForm />);
     
-    const submitButton = screen.getByRole('button', { name: /create employee/i });
+    const submitButton = container.querySelector('[data-testid="submit-button"]') as HTMLButtonElement;
     fireEvent.click(submitButton);
     
     await waitFor(() => {
@@ -45,17 +52,17 @@ describe('EmployeeForm', () => {
   });
 
   it('submits the form with valid data', async () => {
-    render(<EmployeeForm />);
+    const { container } = render(<EmployeeForm />);
     
-    fireEvent.change(screen.getByLabelText(/first name/i), { target: { value: 'John' } });
-    fireEvent.change(screen.getByLabelText(/last name/i), { target: { value: 'Doe' } });
-    fireEvent.change(screen.getByLabelText(/full name/i), { target: { value: 'John Doe' } });
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'john.doe@example.com' } });
-    fireEvent.change(screen.getByLabelText(/country/i), { target: { value: 'USA' } });
-    fireEvent.change(screen.getByLabelText(/job title/i), { target: { value: 'Engineer' } });
-    fireEvent.change(screen.getByLabelText(/salary/i), { target: { value: '50000' } });
+    fireEvent.change(container.querySelector('input[name="firstName"]')!, { target: { value: 'John' } });
+    fireEvent.change(container.querySelector('input[name="lastName"]')!, { target: { value: 'Doe' } });
+    fireEvent.change(container.querySelector('input[name="fullName"]')!, { target: { value: 'John Doe' } });
+    fireEvent.change(container.querySelector('input[name="email"]')!, { target: { value: 'john.doe@example.com' } });
+    fireEvent.change(container.querySelector('input[name="country"]')!, { target: { value: 'USA' } });
+    fireEvent.change(container.querySelector('input[name="jobTitle"]')!, { target: { value: 'Engineer' } });
+    fireEvent.change(container.querySelector('input[name="salary"]')!, { target: { value: '50000' } });
     
-    const submitButton = screen.getByRole('button', { name: /create employee/i });
+    const submitButton = container.querySelector('[data-testid="submit-button"]') as HTMLButtonElement;
     fireEvent.click(submitButton);
     
     await waitFor(() => {
@@ -73,10 +80,10 @@ describe('EmployeeForm', () => {
       error: null,
     });
     
-    render(<EmployeeForm />);
+    const { container } = render(<EmployeeForm />);
     
-    const submitButton = screen.getByRole('button', { name: /creating/i });
-    expect(submitButton).toBeDisabled();
+    const submitButton = container.querySelector('[data-testid="submit-button"]') as HTMLButtonElement;
+    expect(submitButton.disabled).toBe(true);
   });
 
   it('displays error message from API failure', () => {

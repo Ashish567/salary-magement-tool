@@ -15,12 +15,31 @@ import { EmployeeSearch } from "@/components/search/employee-search";
 import { EmployeeFilters } from "@/components/filters/employee-filters";
 import { PaginationControls } from "@/components/pagination/pagination-controls";
 import { format } from "date-fns";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export function EmployeeTable() {
-  const { employees, isLoading, pagination, sortBy, order, setSort } = useEmployees();
+  const { 
+    employees, 
+    isLoading, 
+    sortBy, 
+    order, 
+    setSort, 
+    setSearch, 
+    setFilter, 
+    search, 
+    country, 
+    jobTitle 
+  } = useEmployees();
+
+  const hasFilters = !!(search || country || jobTitle);
+
+  const clearFilters = () => {
+    setSearch('');
+    setFilter('country', '');
+    setFilter('jobTitle', '');
+  };
 
   const handleSort = (field: string) => {
     const newOrder = sortBy === field && order === 'asc' ? 'desc' : 'asc';
@@ -41,27 +60,37 @@ export function EmployeeTable() {
   return (
     <Card className="border-primary/10 shadow-xl shadow-primary/5">
       <CardHeader className="space-y-4">
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <CardTitle>Directory</CardTitle>
-          <EmployeeSearch />
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <CardTitle className="text-2xl font-bold">Directory</CardTitle>
+            <CardDescription>
+              Manage your organization's employees and their payroll details.
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <EmployeeSearch />
+            {hasFilters && (
+              <Button variant="ghost" size="sm" onClick={clearFilters} className="h-9 px-2 lg:px-3">
+                Reset
+                <X className="ml-2 h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
-        <CardDescription>
-          Manage your organization's employees and their payroll details.
-        </CardDescription>
         <EmployeeFilters />
       </CardHeader>
       <CardContent>
-        <div className="rounded-md border overflow-hidden">
+        <div className="rounded-md border overflow-hidden relative max-h-[600px] overflow-y-auto">
           <Table>
-            <TableHeader className="bg-muted/50">
+            <TableHeader className="bg-muted/50 sticky top-0 z-10">
               <TableRow>
-                <TableHead><SortButton field="fullName" label="Full Name" /></TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Country</TableHead>
-                <TableHead>Job Title</TableHead>
-                <TableHead><SortButton field="salary" label="Salary" /></TableHead>
-                <TableHead><SortButton field="createdAt" label="Joined" /></TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="bg-muted/50"><SortButton field="fullName" label="Full Name" /></TableHead>
+                <TableHead className="bg-muted/50">Email</TableHead>
+                <TableHead className="bg-muted/50">Country</TableHead>
+                <TableHead className="bg-muted/50">Job Title</TableHead>
+                <TableHead className="bg-muted/50"><SortButton field="salary" label="Salary" /></TableHead>
+                <TableHead className="bg-muted/50"><SortButton field="createdAt" label="Joined" /></TableHead>
+                <TableHead className="bg-muted/50 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

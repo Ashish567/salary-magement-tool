@@ -1,0 +1,112 @@
+"use client";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { useEmployees } from "@/hooks/use-employees";
+import { EmployeeSearch } from "@/components/search/employee-search";
+import { EmployeeFilters } from "@/components/filters/employee-filters";
+import { PaginationControls } from "@/components/pagination/pagination-controls";
+import { format } from "date-fns";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+
+export function EmployeeTable() {
+  const { employees, isLoading, pagination, sortBy, order, setSort } = useEmployees();
+
+  const handleSort = (field: string) => {
+    const newOrder = sortBy === field && order === 'asc' ? 'desc' : 'asc';
+    setSort(field, newOrder);
+  };
+
+  const SortButton = ({ field, label }: { field: string, label: string }) => (
+    <Button 
+      variant="ghost" 
+      onClick={() => handleSort(field)} 
+      className="-ml-4 h-8 data-[state=open]:bg-accent"
+    >
+      <span>{label}</span>
+      <ArrowUpDown className="ml-2 h-4 w-4" />
+    </Button>
+  );
+
+  return (
+    <Card className="border-primary/10 shadow-xl shadow-primary/5">
+      <CardHeader className="space-y-4">
+        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <CardTitle>Directory</CardTitle>
+          <EmployeeSearch />
+        </div>
+        <CardDescription>
+          Manage your organization's employees and their payroll details.
+        </CardDescription>
+        <EmployeeFilters />
+      </CardHeader>
+      <CardContent>
+        <div className="rounded-md border overflow-hidden">
+          <Table>
+            <TableHeader className="bg-muted/50">
+              <TableRow>
+                <TableHead><SortButton field="fullName" label="Full Name" /></TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Country</TableHead>
+                <TableHead>Job Title</TableHead>
+                <TableHead><SortButton field="salary" label="Salary" /></TableHead>
+                <TableHead><SortButton field="createdAt" label="Joined" /></TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i}>
+                    {Array.from({ length: 7 }).map((_, j) => (
+                      <TableCell key={j}><Skeleton className="h-6 w-full animate-pulse" /></TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : employees.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                    No employees found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                employees.map((employee) => (
+                  <TableRow key={employee.id} className="hover:bg-muted/30 transition-colors">
+                    <TableCell className="font-medium">{employee.fullName}</TableCell>
+                    <TableCell className="text-muted-foreground">{employee.email}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{employee.country}</Badge>
+                    </TableCell>
+                    <TableCell>{employee.jobTitle}</TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(employee.salary)}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {format(new Date(employee.createdAt), 'MMM dd, yyyy')}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <PaginationControls />
+      </CardContent>
+    </Card>
+  );
+}

@@ -28,3 +28,25 @@ export async function POST(req: NextRequest) {
     return ApiResponse.badRequest(error.message || 'Internal Server Error');
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    
+    const query = {
+      page: parseInt(searchParams.get('page') || '1'),
+      limit: parseInt(searchParams.get('limit') || '20'),
+      search: searchParams.get('search') || undefined,
+      country: searchParams.get('country') || undefined,
+      jobTitle: searchParams.get('jobTitle') || undefined,
+      sortBy: searchParams.get('sortBy') as any || 'createdAt',
+      order: searchParams.get('order') as any || 'desc',
+    };
+
+    const result = await employeeService.getEmployees(query);
+
+    return ApiResponse.success(result);
+  } catch (error: any) {
+    return ApiResponse.badRequest(error.message || 'Internal Server Error');
+  }
+}

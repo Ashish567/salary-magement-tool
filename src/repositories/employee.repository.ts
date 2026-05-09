@@ -51,4 +51,29 @@ export class EmployeeRepository {
       throw new EmployeeRepositoryError('Failed to find employee by id');
     }
   }
+
+  async findEmployees(params: {
+    skip: number;
+    take: number;
+    where: Prisma.EmployeeWhereInput;
+    orderBy: Prisma.EmployeeOrderByWithRelationInput;
+  }) {
+    try {
+      const [employees, total] = await Promise.all([
+        prisma.employee.findMany({
+          skip: params.skip,
+          take: params.take,
+          where: params.where,
+          orderBy: params.orderBy,
+        }),
+        prisma.employee.count({
+          where: params.where,
+        }),
+      ]);
+
+      return { employees, total };
+    } catch (error) {
+      throw new EmployeeRepositoryError('Failed to fetch employees');
+    }
+  }
 }
